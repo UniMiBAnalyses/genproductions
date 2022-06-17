@@ -160,7 +160,7 @@ def make_tarball(WORKDIR, iscmsconnect, PRODHOME, CARDSDIR, CARDNAME, scram_arch
 
 def mkdir(path):
     try:
-        os.system("mkdir {}".format(path))
+        os.system("mkdir -p {}".format(path))
     except:
         print("Directory {} already present, skipping".format(path))
         pass
@@ -776,8 +776,8 @@ if __name__ == "__main__":
         basesize = get_folder_size(all_rw_me[0])
         for i in all_rw_me[1:]:
             if get_folder_size(i) != basesize: 
-                print("[ERROR] folder {} does not match basefolder size...".format(i))
-                sys.exit(0)
+                print("[ERROR] folder {} does not match basefolder size: {},  {}...".format(i, get_folder_size(i), basesize))
+                #sys.exit(0)
         
         # Take first rwgt directory in the list. Save the SM ME (rw_me) also for all the
         # other reweight points. 
@@ -830,6 +830,113 @@ if __name__ == "__main__":
             os.chdir(WORKDIR)
             os.system("sed -i s/\"self.rwgt_dir,\'rw_me\',\'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format("gridpack/mgbasedir/madgraph/interface/reweight_interface.py"))
             os.system("sed -i s/\"self.rwgt_dir, \'rw_me\', \'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format("gridpack/mgbasedir/madgraph/interface/reweight_interface.py"))
+
+
+    if any(i in ["tarrwgt"] for i in args.task ):
+        rwgt = os.path.abspath(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
+        if not os.path.isdir(rwgt):
+            rwgt = os.path.abspath(args.cardname + "/" + args.cardname + "_gridpack/work/gridpack/process/madevent/rwgt")
+            if not os.path.isdir(rwgt):
+                print("[ERROR] The rwgt directory is not under WORKDIR neither WORKDIR/gridpack")
+                sys.exit(0)
+        
+        os.chdir(rwgt)
+        ls = glob("*/")
+
+        # check wether we run createsymlinks before:
+        createsyml = False 
+        for dir_ in ls:
+            if os.path.islink(dir_ + "/rw_me"): 
+                createsyml = True
+                break 
+
+        # If we run the symlink than we do not want to tar the 
+        # intial directory so that the reweighting will always find the 
+        # initial point (pointing to rw_me)
+        original = ""
+        if createsyml:
+            for dir_ in ls:
+                if not os.path.islink(dir_ + "/rw_me") and os.path.isdir(dir_ + "/rw_me"):
+                    original = dir_ 
+
+        if original == "" and createsyml: 
+            print("[ERROR] Could not find original rw_me directory (the non symbolic link). Check what's happening...")
+            sys.exit(0)
+
+
+        print("---> Tarring single reweight directories and send new running script / single reweight cards ...")
+
+
+        os.chdir(rwgt)
+        for idx, i in enumerate(ls):
+            print("--> Processing reweight " + i + " {:.2f}%".format(100*float(idx)/len(ls)))
+            if os.path.isfile("{}.tar.gz".format(i[:-1])): 
+                print("it's a file")
+                continue
+            # if this is the original rwgt directory then we do not tar it
+            # so it will always be available 
+            if i == original: continue
+
+            os.system("tar -zcf {}.tar.gz {}".format(i[:-1], i[:-1]))
+
+            #removing the dir to actually save space
+            os.system("rm -rf {}".format(i))
+
+        # Now we want to copy both single reweight cards and the 
+        # modified script 
+        if os.path.isdir("{}/rw_cards".format("/".join(i for i in rwgt.split("/")[:-1]))):
+            os.system("rm -rf {}/rw_cards".format("/".join(i for i in rwgt.split("/")[:-1])))
+            
+        mkdir("{}/rw_cards".format("/".join(i for i in rwgt.split("/")[:-1])))
+        os.system("cp -r {}/*.dat {}/rw_cards".format(os.path.join(PRODHOME, args.subfolder), "/".join(i for i in rwgt.split("/")[:-1])))
+
+
+        # modify the names so that it is easier to recover from the .sh script
+        # e.g. rwgt_cHbox_cHDD_WWjjenumunu -> rwgt_cHbox_cHDD
+        l = glob("{}/rw_cards/*".format("/".join(i for i in rwgt.split("/")[:-1])))
+        for i in l:
+            name = i.split("/")[-1].split("_" + args.cardname + ".dat")[0] + ".dat"
+            path = "{}/rw_cards/".format("/".join(i for i in rwgt.split("/")[:-1])) + name
+            os.system("mv {} {}".format(i, path))
+
+
+        # os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), "/".join(WORKDIR, "gridpack/runcmsgrid.sh")))
+
+        # os.chdir(os.path.join(WORKDIR, "gridpack"))
+
+        # os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid.sh".format(scram_arch))
+        # os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid.sh".format(cmssw_version))
+        
+        # pdfExtraArgs=""
+
+        # if args.is5FlavorScheme:
+        #     pdfExtraArgs+="--is5FlavorScheme"
+        
+        # print("---> Retrieve pdf for {} flavour scheme".format(5 if args.is5FlavorScheme else 4))
+
+        # out = subprocess.Popen(["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        # pdfSysArgs,stderr = out.communicate()
+
+        # os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
+
+        os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), os.path.join(WORKDIR, "gridpack/runcmsgrid_2.sh")))
+
+        os.chdir(os.path.join(WORKDIR, "gridpack"))
+
+        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid_2.sh".format(scram_arch))
+        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid_2.sh".format(cmssw_version))
+        
+        pdfExtraArgs=""
+
+        if args.is5FlavorScheme:
+            pdfExtraArgs+="--is5FlavorScheme"
+        
+        print("---> Retrieve pdf for {} flavour scheme".format(5 if args.is5FlavorScheme else 4))
+
+        out = subprocess.Popen(["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        pdfSysArgs,stderr = out.communicate()
+
+        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid_2.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
 
 
 
