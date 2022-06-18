@@ -215,8 +215,8 @@ cd "${{condor_scratch}}/{card_name}/{card_name}_gridpack/work/process/madevent"
 # Remove All EPS files, they weight A LOT
 rm rwgt/*/*/SubProcesses/P*/*.ps
 
-ls
-XZ_OPT="--lzma2=preset=9,dict=512MiB" tar -cJpsf "${{condor_scratch}}/{sandbox_output}" "rwgt"
+# rwgt directory name
+XZ_OPT="--lzma2=preset=9,dict=512MiB" tar -cJpsf "${{condor_scratch}}/{sandbox_output}" "rwgt/{rwgt_name}"
 
 # Stage-out sandbox
 # First, try XRootD via stash.osgconnect.net
@@ -229,7 +229,7 @@ else
     echo "The xrdcp command below failed:"
     echo "xrdcp -f ${{condor_scratch}}$sandbox_output root://stash.osgconnect.net:1094/${{stash_tmpdir##/stash}}/$sandbox_output"
 fi
-""".format(sub_folder=sub_folder, sandbox_output="{}_output.tar.xz".format(exec_name) , input_files="input_reweight_{}.tar.gz".format(card_name), card_name=card_name, card_dir=card_dir, exec_name=exec_name)
+""".format(sub_folder=sub_folder, sandbox_output="{}_output.tar.xz".format(exec_name) , input_files="input_reweight_{}.tar.gz".format(card_name), card_name=card_name, card_dir=card_dir, exec_name=exec_name, rwgt_name=exec_name.split("_" + card_name)[0])
 
     f = open(output_folder + exec_name + ".sh", "w")
     f.write(l)
@@ -568,35 +568,88 @@ if __name__ == "__main__":
         
         print("---> ALL Jobs Finished")
 
-    # if any(i in ["mv", "check", "all"] for i in args.task ):
-
-    #     not_ok = []
-    #     #check for all the outputs
-    #     for key in rd.keys():
-    #         if not os.path.isfile("rwgt_" + str(key) + "_" + args.cardname + "_output.tar.xz"): 
-    #             print("[ERROR] No output found for rwgt_" + str(key) + "_" + args.cardname + "_output.tar.xz")
-    #             not_ok.append("rwgt_" + str(key))
-        
-    #     if len(not_ok) > 0: 
-    #         print("----> Missing Summary")
-    #         print(not_ok)
-    #         sys.exit(0)
-
-    if any(i in ["unpack", "check", "resub"] for i in args.task ):
+    if any(i in ["mvoutput", "check", "resub"] for i in args.task ):
 
         mkdir("tmp_{}".format(args.cardname))
         all_outputs = glob("rwgt_*_" + args.cardname + "_output.tar.xz")
 
-        for idx, o in enumerate(all_outputs):
-            print("--> Processing reweight " + o + " {:.2f}%".format(100*float(idx)/len(all_outputs)))
+        for o in all_outputs:
             ops = o.split("rwgt_")[1].split("_" + args.cardname + "_output.tar.xz")[0]
-            # check if we already unpacked this directory 
-            if os.path.isdir("tmp_{}".format(args.cardname) + "/rwgt_" + ops): continue 
+            os.system("cp {} tmp_{}/rwgt_{}.tar.gz".format(o, args.cardname, ops))
 
-            # if not present we unpack
+
+    if any(i in ["unpack", "check", "resub"] for i in args.task ):
+
+        os.chdir(PRODHOME)
+        if not os.path.isdir("tmp_{}".format(args.cardname)):
+            print("[ERROR] No tmp_{} directory....".format(args.cardname))
+            sys.exit(0)
+
+        os.chdir("tmp_{}".format(args.cardname))
+        all_outputs = glob("*.tar.gz".format(args.cardname))
+
+        for idx, o in enumerate(all_outputs):
+            print("--> UnTarring reweight " + o + " {:.2f}%".format(100*float(idx)/len(all_outputs)))       
             os.system("tar axf " + o)
-            os.system("mv rwgt/* tmp_{}".format(args.cardname))
-            os.system("rm -rf rwgt")
+            if os.path.isdir("rwgt"): os.system("mv rwgt/* .; rm -rf rwgt")
+            os.system("rm {}".format(o))
+
+        os.chdir(PRODHOME)
+
+    if any(i in ["repack"] for i in args.task ):
+
+        os.chdir(PRODHOME)
+        if not os.path.isdir("tmp_{}".format(args.cardname)):
+            print("[ERROR] No tmp_{} directory....".format(args.cardname))
+            sys.exit(0)
+
+        os.chdir("tmp_{}".format(args.cardname))
+        all_outputs = glob("*")
+
+        for idx, o in enumerate(all_outputs):
+            print("--> Tarring reweight " + o + " {:.2f}%".format(100*float(idx)/len(all_outputs)))
+            if not o.endswith(".tar.gz"):
+                print(o + ".tar.gz")
+                name = o.split("/")[-1]
+                os.system("XZ_OPT=\"--lzma2=preset=9,dict=512MiB\" tar -cJpsf {} {}".format(o + ".tar.gz", o))
+                os.system("rm -rf {}".format(o))
+
+        os.chdir(PRODHOME)
+
+    # if any(i in ["unpack", "check", "resub"] for i in args.task ):
+
+    #     mkdir("tmp_{}".format(args.cardname))
+    #     all_outputs = glob("rwgt_*_" + args.cardname + "_output.tar.xz")
+
+    #     for idx, o in enumerate(all_outputs):
+    #         print("--> Processing reweight " + o + " {:.2f}%".format(100*float(idx)/len(all_outputs)))
+    #         ops = o.split("rwgt_")[1].split("_" + args.cardname + "_output.tar.xz")[0]
+    #         # check if we already unpacked this directory 
+    #         if os.path.isdir("tmp_{}".format(args.cardname) + "/rwgt_" + ops): continue 
+
+    #         # if not present we unpack
+    #         os.system("tar axf " + o)
+    #         os.system("mv rwgt/* tmp_{}".format(args.cardname))
+    #         #os.system("mv rwgt_{} tmp_{}".format(ops, args.cardname))
+    #         os.system("rm -rf rwgt")
+    #         #os.system("rm -rf rwgt_{}".format(ops))
+
+
+        # mkdir("tmp_{}".format(args.cardname))
+        # all_outputs = glob("rwgt_*_" + args.cardname + "_output.tar.xz")
+
+        # for idx, o in enumerate(all_outputs):
+        #     print("--> Processing reweight " + o + " {:.2f}%".format(100*float(idx)/len(all_outputs)))
+        #     ops = o.split("rwgt_")[1].split("_" + args.cardname + "_output.tar.xz")[0]
+        #     # check if we already unpacked this directory 
+        #     if os.path.isdir("tmp_{}".format(args.cardname) + "/rwgt_" + ops): continue 
+
+        #     # if not present we unpack
+        #     os.system("tar axf " + o)
+        #     os.system("mv rwgt/* tmp_{}".format(args.cardname))
+        #     #os.system("mv rwgt_{} tmp_{}".format(ops, args.cardname))
+        #     os.system("rm -rf rwgt")
+        #     #os.system("rm -rf rwgt_{}".format(ops))
 
     if any(i in ["check", "resub"] for i in args.task ):
         
@@ -676,12 +729,22 @@ if __name__ == "__main__":
 
         for idx, key in enumerate(rd.keys()):
             print("--> Processing reweight rwgt_" + key + " {:.2f}%".format(100*float(idx)/all_rwgt_dirs))
+
+            # if we find directories unpacked
             if is_checked and os.path.isdir("tmp_{}".format(args.cardname) + "/rwgt_" + key): 
                 if not os.path.isdir(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt/rwgt_{}".format(key) ):
                     os.system("cp -r tmp_{}/rwgt_{} ".format(args.cardname, key) + args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
                 else:
                     print("--> Reweight {} already present, skipping".format(key))
+            
+            # if we find packed dirs 
+            if is_checked and os.path.isfile("tmp_{}".format(args.cardname) + "/rwgt_" + key + ".tar.gz"): 
+                if not os.path.isfile(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt/rwgt_{}.tar.gz".format(key) ):
+                    os.system("cp tmp_{}/rwgt_{}.tar.gz ".format(args.cardname, key) + args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
+                else:
+                    print("--> Reweight {} already present, skipping".format(key))
 
+            
             else:
                 os.system("tar axf rwgt_" + str(key) + "_" + args.cardname + "_output.tar.xz")
                 os.system("mv rwgt/* " + args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
@@ -757,28 +820,31 @@ if __name__ == "__main__":
             print("---> Creating custom reweight card and copy it in cards folder and gridpack/process/madevent/Cards/reweight_card.dat")
             os.chdir(PRODHOME)
             build_reweight_card(rd, args.change_process, [args.cardpath + "/" + args.cardname + "_reweight_card.dat", WORKDIR + "/gridpack/process/madevent/Cards/reweight_card.dat"])
-
+    
+    ##################################
 
     if any(i in ["createsymlinks"] for i in args.task ):
-        # locate process dir
-        rwgt = os.path.abspath(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
-        if not os.path.isdir(rwgt):
-            rwgt = os.path.abspath(args.cardname + "/" + args.cardname + "_gridpack/work/gridpack/process/madevent/rwgt")
-            if not os.path.isdir(rwgt):
-                print("[ERROR] The rwgt directory is not under WORKDIR neither WORKDIR/gridpack")
-                sys.exit(0)
         
+        rwgt = os.path.join(PRODHOME, "tmp_{}".format(args.cardname))
+        if not os.path.isdir(rwgt): 
+            print("[ERROR] Before creating symbolic links to rw_me, run check")
+            sys.exit(0)
+
         os.chdir(rwgt)
         all_rwgts = glob("*")
 
-        # first check that the size of each rw_me directory is exactly the same
         all_rw_me = glob("*/rw_me")
+        if len(all_rw_me) == 0:
+            print("[ERROR] You first need to unpack tmp directory. -t unpacktmp")
+            sys.exit(0)
+
         basesize = get_folder_size(all_rw_me[0])
         for i in all_rw_me[1:]:
             if get_folder_size(i) != basesize: 
                 print("[ERROR] folder {} does not match basefolder size: {},  {}...".format(i, get_folder_size(i), basesize))
                 #sys.exit(0)
-        
+
+
         # Take first rwgt directory in the list. Save the SM ME (rw_me) also for all the
         # other reweight points. 
         # Remember, the script will exit if rw_me cointains the rwgt.pkl file to avoid things getting lost or
@@ -823,13 +889,98 @@ if __name__ == "__main__":
 
             os.chdir(rwgt)
 
+        # check whether a gridpack folder is already present
+        # otherwise we sed the appropriate mmgdir
+
+        mg = os.path.join(WORKDIR, "gridpack/mgbasedir" )
+        if not os.path.isdir(mg):
+            mg = os.path.join(WORKDIR, MGBASEDIRORIG)
+            if not os.path.isdir(mg):
+                print("[ERROR] No MG dir found under {}".format(mg))
+
+        
+
         # So if we found that pkls files are saved in rw_me directory 
         # we assume that the reweight interface of madgraph will search pickles 
         # in rw_me. We change that to rw_me_second in functions do_launch and load_from_pickle
         if sed_rwgt_interface:
             os.chdir(WORKDIR)
-            os.system("sed -i s/\"self.rwgt_dir,\'rw_me\',\'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format("gridpack/mgbasedir/madgraph/interface/reweight_interface.py"))
-            os.system("sed -i s/\"self.rwgt_dir, \'rw_me\', \'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format("gridpack/mgbasedir/madgraph/interface/reweight_interface.py"))
+            os.system("sed -i s/\"self.rwgt_dir,\'rw_me\',\'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format(os.path.join(mg, "madgraph/interface/reweight_interface.py")))
+            os.system("sed -i s/\"self.rwgt_dir, \'rw_me\', \'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format(os.path.join(mg, "madgraph/interface/reweight_interface.py")))
+
+        ##########################################################################
+        ############## OLD WAY
+        ##########################################################################
+        # locate process dir
+        # rwgt = os.path.abspath(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
+        # if not os.path.isdir(rwgt):
+        #     rwgt = os.path.abspath(args.cardname + "/" + args.cardname + "_gridpack/work/gridpack/process/madevent/rwgt")
+        #     if not os.path.isdir(rwgt):
+        #         print("[ERROR] The rwgt directory is not under WORKDIR neither WORKDIR/gridpack")
+        #         sys.exit(0)
+        
+        # os.chdir(rwgt)
+        # all_rwgts = glob("*")
+
+        # # first check that the size of each rw_me directory is exactly the same
+        # all_rw_me = glob("*/rw_me")
+        # basesize = get_folder_size(all_rw_me[0])
+        # for i in all_rw_me[1:]:
+        #     if get_folder_size(i) != basesize: 
+        #         print("[ERROR] folder {} does not match basefolder size: {},  {}...".format(i, get_folder_size(i), basesize))
+        #         #sys.exit(0)
+        
+        # # Take first rwgt directory in the list. Save the SM ME (rw_me) also for all the
+        # # other reweight points. 
+        # # Remember, the script will exit if rw_me cointains the rwgt.pkl file to avoid things getting lost or
+        # # overwritten
+        # for idx, j in enumerate(all_rwgts):
+        #     if os.path.isdir(j + "/rw_me"):
+
+        #         #save the index of the benchmark directory along with 
+        #         # the relative path of the rw_me directory.
+        #         # relative so that when we tar the symbolic links will remain
+        #         orig_rw_me = [idx, "../" + j + "/rw_me" ]
+        #         break 
+
+        # sed_rwgt_interface = False
+        # for idx, rwgt_dir in enumerate(all_rwgts):
+
+        #     print("---> Create symlinks to rw_me for {} {:.2f}%".format(rwgt_dir, 100*float(idx)/(len(all_rwgts)-1)))
+
+        #     os.chdir(rwgt_dir)
+
+        #     if os.path.isfile("rw_me/rwgt.pkl"): 
+        #         print("[INFO] rwgt.pkl is under rw_me, this step assumes rwgt.pkl under rw_me_second ... MOVING")
+        #         os.system("mv rw_me/rwgt.pkl rw_me_second")
+        #         sed_rwgt_interface = True
+        #         #sys.exit(0)
+
+        #     # do not create symlink if the index is equal to the 
+        #     # original designated rw directory 
+        #     if idx == orig_rw_me[0]: 
+        #         os.chdir(rwgt)
+        #         continue
+            
+        #     if not os.path.islink("rw_me"):
+        #         print("--> Removing")
+        #         os.system("rm -rf rw_me")
+        #         os.system("ln -s {} rw_me".format(orig_rw_me[1]))
+        #     else:
+        #         print("---> Symlink for rw_me already present")
+        #         # if there is a symlink this procedure was already done, so we specifiy 
+        #         # that the script should change the path to pick up the pickles from rw_me to rw_me_second
+        #         sed_rwgt_interface = True
+
+        #     os.chdir(rwgt)
+
+        # # So if we found that pkls files are saved in rw_me directory 
+        # # we assume that the reweight interface of madgraph will search pickles 
+        # # in rw_me. We change that to rw_me_second in functions do_launch and load_from_pickle
+        # if sed_rwgt_interface:
+        #     os.chdir(WORKDIR)
+        #     os.system("sed -i s/\"self.rwgt_dir,\'rw_me\',\'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format("gridpack/mgbasedir/madgraph/interface/reweight_interface.py"))
+        #     os.system("sed -i s/\"self.rwgt_dir, \'rw_me\', \'rwgt.pkl\'\"/\"self.rwgt_dir,\'rw_me_second\',\'rwgt.pkl\'\"/g {}".format("gridpack/mgbasedir/madgraph/interface/reweight_interface.py"))
 
 
     if any(i in ["tarrwgt"] for i in args.task ):
@@ -886,7 +1037,7 @@ if __name__ == "__main__":
         # modified script 
         if os.path.isdir("{}/rw_cards".format("/".join(i for i in rwgt.split("/")[:-1]))):
             os.system("rm -rf {}/rw_cards".format("/".join(i for i in rwgt.split("/")[:-1])))
-            
+
         mkdir("{}/rw_cards".format("/".join(i for i in rwgt.split("/")[:-1])))
         os.system("cp -r {}/*.dat {}/rw_cards".format(os.path.join(PRODHOME, args.subfolder), "/".join(i for i in rwgt.split("/")[:-1])))
 
