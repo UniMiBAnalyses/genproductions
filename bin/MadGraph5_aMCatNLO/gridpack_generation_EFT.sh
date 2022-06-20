@@ -126,9 +126,11 @@ make_gridpack () {
     MGBASEDIR=mgbasedir
     
     MG_EXT=".tar.gz"
+    #MG=MG5_aMC_v2_6_5$MG_EXT
     MG=MG5_aMC_v2.6.5$MG_EXT
     MGSOURCE=https://cms-project-generators.web.cern.ch/cms-project-generators/$MG
-    
+    #MGSOURCE=https://gboldrin.web.cern.ch/gboldrin/generators/$MG
+
     MGBASEDIRORIG=$(echo ${MG%$MG_EXT} | tr "." "_")
     isscratchspace=0
     
@@ -171,6 +173,12 @@ make_gridpack () {
       wget --no-check-certificate ${MGSOURCE}
       tar xzf ${MG}
       rm "$MG"
+
+
+      cd $MGBASEDIRORIG/madgraph/interface/
+      rm reweight_interface.py
+      wget http://gboldrin.web.cern.ch/gboldrin/generators/reweight_interface.py
+      cd -
     
       #############################################
       #Apply any necessary patches on top of official release
@@ -246,10 +254,13 @@ make_gridpack () {
     
       #load extra models if needed
 
-      wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/SMEFTsim_U35_MwScheme_UFO_b_massless.tar.gz
+      # wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/SMEFTsim_U35_MwScheme_UFO_b_massless.tar.gz
+      wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/SMEFTsim_topU3l_MwScheme_UFO_b_massless.tar.gz
       cd models
-      tar xavf ../SMEFTsim_U35_MwScheme_UFO_b_massless.tar.gz
-      cd SMEFTsim_U35_MwScheme_UFO_b_massless
+      # tar xavf ../SMEFTsim_U35_MwScheme_UFO_b_massless.tar.gz
+      tar xavf ../SMEFTsim_topU3l_MwScheme_UFO_b_massless.tar.gz
+      # cd SMEFTsim_U35_MwScheme_UFO_b_massless
+      cd SMEFTsim_topU3l_MwScheme_UFO_b_massless
       # wget all restrictions
       wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/restrict_cHWB_cHDD_cHl1_cHl3_cHq1_cHq3_cll_cll1_massless.dat
       wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/restrict_cW_cHWB_cHDD_cHl1_cHl3_cHq1_cHq3_cll_cll1_massless.dat
@@ -322,8 +333,8 @@ make_gridpack () {
           ./$MGBASEDIRORIG/bin/mg5_aMC --mode=MadSTR ${name}_proc_card.dat # run invoking MadSTR plugin
       fi
 	
-      is5FlavorScheme=0
-      if tail -n 20 $LOGFILE | grep -q -e "^p *=.*b\~.*b" -e "^p *=.*b.*b\~"; then 
+      is5FlavorScheme=0 
+      if tail -n 20 $CARDSDIR/${name}_proc_card.dat | grep -q -e "p *=.*b\~.*b" -e "p *=.*b.*b\~"; then 
         is5FlavorScheme=1
       fi
     
@@ -361,12 +372,12 @@ make_gridpack () {
     # HERE CODEGEN STEP IS FINISHED
     # # # # # # # # # # # # # # # #
 
-    elif [ "${jobstep}" = "INTEGRATE" ] || [ "${jobstep}" = "ALL" || [ "${jobstep}" = "REWEIGHT" ]; then  
+    elif [ "${jobstep}" = "INTEGRATE" ] || [ "${jobstep}" = "ALL" ] || [ "${jobstep}" = "REWEIGHT" ]; then  
       echo "Reusing existing directory assuming generated code already exists"
       echo "WARNING: If you changed the process card you need to clean the folder and run from scratch"
     
       if [ "$is5FlavorScheme" -eq -1 ]; then
-        if cat $LOGFILE_NAME*.log | grep -q -e "^p *=.*b\~.*b" -e "^p *=.*b.*b\~"; then 
+        if cat $CARDSDIR/${name}_proc_card.dat | grep -q -e "p *=.*b\~.*b" -e "p *=.*b.*b\~"; then 
             is5FlavorScheme=1
         else
             is5FlavorScheme=0
@@ -598,7 +609,7 @@ make_gridpack () {
         
         echo "cleaning temporary output"
         mv $WORKDIR/processtmp/pilotrun_gridpack.tar.gz $WORKDIR/
-        mv $WORKDIR/processtmp/Events/pilotrun/unweighted_events.lhe.gz $WORKDIR/
+        cp $WORKDIR/processtmp/Events/pilotrun/unweighted_events.lhe.gz $WORKDIR/
         #rm -rf processtmp
         mkdir process
         cd process
@@ -661,7 +672,6 @@ make_gridpack () {
       echo "----> starting reweighting!! "
 
       echo "cleaning temporary output"
-      echo $PWD
       
       # It should be here after codegen
       if [ ! -d process ]; then 
@@ -684,7 +694,7 @@ make_gridpack () {
       fi
 
       if [ ! -f $WORKDIR/unweighted_events.lhe.gz ]; then 
-        mv $WORKDIR/processtmp/pilotrun/unweighted_events.lhe.gz $WORKDIR/
+        cp $WORKDIR/processtmp/pilotrun/unweighted_events.lhe.gz $WORKDIR/
       fi
 
       # precompile reweighting if necessary
@@ -694,6 +704,12 @@ make_gridpack () {
           extract_width $isnlo $WORKDIR $CARDSDIR ${name}
       fi
       
+      if [ -n "$REWEIGHT_ON_CONDOR" ]; then 
+         if [ $REWEIGHT_ON_CONDOR ]; then 
+            echo "Reweighting on condor gone ok, exiting" 
+            exit 0
+         fi
+      fi 
       #prepare madspin grids if necessary
       if [ -e $CARDSDIR/${name}_madspin_card.dat ]; then
         echo "import $WORKDIR/unweighted_events.lhe.gz" > madspinrun.dat
@@ -917,6 +933,13 @@ if [ "${name}" != "interactive" ]; then
     fi
     # Re-enable set -e
     set -e
+
+    if [ -n "$REWEIGHT_ON_CONDOR" ]; then 
+      if [ $REWEIGHT_ON_CONDOR ]; then 
+        echo "Reweighting on condor gone ok, exiting" 
+        exit 0
+      fi
+    fi 
 
     echo "Saving log file(s)"
     cd $WORKDIR/gridpack
