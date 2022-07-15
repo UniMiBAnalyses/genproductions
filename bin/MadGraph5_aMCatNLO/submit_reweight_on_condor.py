@@ -216,7 +216,9 @@ cd "${{condor_scratch}}/{card_name}/{card_name}_gridpack/work/process/madevent"
 rm rwgt/*/*/SubProcesses/P*/*.ps
 
 # rwgt directory name
-XZ_OPT="--lzma2=preset=9,dict=512MiB" tar -cJpsf "${{condor_scratch}}/{sandbox_output}" "rwgt/{rwgt_name}"
+cd rwgt
+XZ_OPT="--lzma2=preset=9,dict=512MiB" tar -cJpsf "${{condor_scratch}}/{sandbox_output}" "{rwgt_name}"
+
 
 # Stage-out sandbox
 # First, try XRootD via stash.osgconnect.net
@@ -285,7 +287,7 @@ def write_rew_dict(rew_dict, output_folder, cardname, cardpath, sub_folder):
 
     return 
 
-def build_rew_dict_scratch(operators, change_process , model):
+def build_rew_dict_scratch(operators, change_process , model, append_SM=False):
 
     rew_d = {}
 
@@ -314,6 +316,27 @@ def build_rew_dict_scratch(operators, change_process , model):
     counter_mix = 0
     counter_single = 0
 
+    if append_SM:
+        tag="SM"
+        rwgt_points = []
+        rwgt_points += mandatory
+
+        # first append a comment line
+        rwgt_points.append("# SM")
+        # change rwgt direcrory 
+        rwgt_points.append("change rwgt_dir rwgt/rwgt_{}\n".format(tag))
+        # change model
+        rwgt_points.append("change model {}-SMlimit_massless\n".format(model))
+        # evaluate the mixed term (1,1)
+        rwgt_points.append("\n")
+        rwgt_points.append("launch --rwgt_name=SM\n")
+        # idx += 1
+
+        rwgt_points.append("\n")
+        rwgt_points.append("\n")
+
+        rew_d[tag] = copy.copy(rwgt_points)
+
     idx = 1
     for i in range (len (sortedsel)):
         for j in range (i+1, len (sortedsel)):
@@ -337,40 +360,54 @@ def build_rew_dict_scratch(operators, change_process , model):
             rwgt_points.append("\n")
             rwgt_points.append("\n")
 
+            rew_d[ov_tag] = copy.copy(rwgt_points)
+
             # check if first operator already gen
             if not sortedsel[i][0] in done_singles:
                 # If not then evaluate (1,0) and (-1,0)
                 for val in [-1 ,1]:
                     tag = sortedsel[i][1]
                     if val == -1: tag += "m1"
-                    rwgt_points.append("# {}={} {}\n".format(sortedsel[i][1], val, idx))
-                    rwgt_points.append("launch --rwgt_name={}\n".format(tag))
-                    rwgt_points.append("    set {} {} {}\n".format(sortedsel[i][2], sortedsel[i][3], val))
-                    rwgt_points.append("    set {} {} 0\n".format(sortedsel[j][2], sortedsel[j][3]))
-                    rwgt_points.append("\n")
+                    rwgt_single_point = []
+                    rwgt_single_point += mandatory
+                    rwgt_single_point.append("# {}={} {}\n".format(sortedsel[i][1], val, idx))
+
+                    rwgt_single_point.append("change rwgt_dir rwgt/rwgt_{}\n".format(tag))
+                    rwgt_single_point.append("change model {}-{}_massless\n".format(model, tag))
+
+                    rwgt_single_point.append("launch --rwgt_name={}\n".format(tag))
+                    
+                    rwgt_single_point.append("\n")
                     idx += 1
                     counter_single += 1
 
+                    rew_d[tag] = copy.copy(rwgt_single_point)
+
                 done_singles.append(sortedsel[i][0])
 
-            # check if first operator already gen
+            # check if second operator already gen
             if not sortedsel[j][0] in done_singles:
                 # If not then evaluate (1,0) and (-1,0)
                 for val in [-1 ,1]:
                     tag = sortedsel[j][1]
                     if val == -1: tag += "m1"
-                    rwgt_points.append("# {}={} {}\n".format(sortedsel[j][1], val, idx))
-                    rwgt_points.append("launch --rwgt_name={}\n".format(tag))
-                    rwgt_points.append("    set {} {} {}\n".format(sortedsel[j][2], sortedsel[j][3], val))
-                    rwgt_points.append("    set {} {} 0\n".format(sortedsel[i][2], sortedsel[i][3]))
-                    rwgt_points.append("\n")
+                    rwgt_single_point = []
+                    rwgt_single_point += mandatory
+                    rwgt_single_point.append("# {}={} {}\n".format(sortedsel[j][1], val, idx))
+
+                    rwgt_single_point.append("change rwgt_dir rwgt/rwgt_{}\n".format(tag))
+                    rwgt_single_point.append("change model {}-{}_massless\n".format(model, tag))
+
+                    rwgt_single_point.append("launch --rwgt_name={}\n".format(tag))
+                    
+                    rwgt_single_point.append("\n")
                     idx += 1
                     counter_single += 1
 
+                    rew_d[tag] = copy.copy(rwgt_single_point)
+
                 done_singles.append(sortedsel[j][0])
 
-            rew_d[ov_tag] = copy.copy(rwgt_points)
-            #rew_d[idx] = copy.copy(rwgt_points)
         
             counter_mix += 1
     
@@ -452,6 +489,7 @@ if __name__ == "__main__":
     parser.add_argument('-cmssw', '--cmssw',                    dest='cmssw',               help='CMSSW version required. Default is CMSSW_10_6_19', required = False, default="CMSSW_10_6_19", type=str)
     parser.add_argument('-iscmsc', '--iscmsconnect',            dest='iscmsconnect',        help='Are you working on cmsconnect? Default is true', required = False, default=True, action="store_false")
     parser.add_argument('-cr', '--createreweight',              dest='createreweight',      help='File operator.py will be imported and restriction cards created', required = False, default=False, action="store_true")
+    parser.add_argument('-add_sm_point', '--add_sm_point',      dest='add_sm_point',        help='When building the reweighting, this will also add the SM point (e.g. if your codegen and integrate started from an EFT point). Default is false!', required = False, default=False, action="store_true")
     parser.add_argument('-change_process', '--change_process',  dest='change_process',      help='If args.cr is specified, add this to change process in reweight card', required = False, default="", type=str)
     parser.add_argument('-m', '--model',                        dest='model',               help='If args.cr is specified, add this to change the baseline model. Default is SMEFTsim_topU3l_MwScheme_UFO_b_massless', required = False, default="SMEFTsim_topU3l_MwScheme_UFO_b_massless", type=str)
 
@@ -570,11 +608,13 @@ if __name__ == "__main__":
 
     if any(i in ["mvoutput", "check", "resub"] for i in args.task ):
 
+        print("---> Copying output results in tmp dir")
         mkdir("tmp_{}".format(args.cardname))
         all_outputs = glob("rwgt_*_" + args.cardname + "_output.tar.xz")
 
         for o in all_outputs:
             ops = o.split("rwgt_")[1].split("_" + args.cardname + "_output.tar.xz")[0]
+            #if not os.path.isdir("tmp_{}/rwgt_{}".format(args.cardname, ops)):
             os.system("cp {} tmp_{}/rwgt_{}.tar.gz".format(o, args.cardname, ops))
 
 
@@ -589,9 +629,10 @@ if __name__ == "__main__":
         all_outputs = glob("*.tar.gz".format(args.cardname))
 
         for idx, o in enumerate(all_outputs):
-            print("--> UnTarring reweight " + o + " {:.2f}%".format(100*float(idx)/len(all_outputs)))       
+            print("--> UnTarring reweight " + o + " {:.2f}%".format(100*float(idx)/len(all_outputs)))  
+            if os.path.isdir(o.split(".tar.gz")[0]): continue     
             os.system("tar axf " + o)
-            if os.path.isdir("rwgt"): os.system("mv rwgt/* .; rm -rf rwgt")
+            #if os.path.isdir("rwgt"): os.system("mv rwgt/* .; rm -rf rwgt")
             os.system("rm {}".format(o))
 
         os.chdir(PRODHOME)
@@ -711,12 +752,10 @@ if __name__ == "__main__":
 
         # check if process dir under workdir
         if os.path.isdir(args.cardname + "/" + args.cardname + "_gridpack/work/gridpack") and os.path.isdir(args.cardname + "/" + args.cardname + "_gridpack/work/gridpack/process"):
-            print("--> Moving process directory from gridpack/process under work directory ")
-            os.system("mv " + args.cardname + "/" + args.cardname + "_gridpack/work/gridpack/process " + WORKDIR)    
+            if not os.path.isdir(args.cardname + "/" + args.cardname + "_gridpack/work/process"):
+                print("--> Moving process directory from gridpack/process under work directory ")
+                os.system("mv " + args.cardname + "/" + args.cardname + "_gridpack/work/gridpack/process " + WORKDIR)    
 
-        #create rwgt dir if not present
-        if not os.path.isdir(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt"):
-            mkdir(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
         
         #check if we unpacked before the end of jobs to check
         is_checked = os.path.isdir("tmp_{}".format(args.cardname))
@@ -738,7 +777,7 @@ if __name__ == "__main__":
                     print("--> Reweight {} already present, skipping".format(key))
             
             # if we find packed dirs 
-            if is_checked and os.path.isfile("tmp_{}".format(args.cardname) + "/rwgt_" + key + ".tar.gz"): 
+            elif is_checked and os.path.isfile("tmp_{}".format(args.cardname) + "/rwgt_" + key + ".tar.gz"): 
                 if not os.path.isfile(args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt/rwgt_{}.tar.gz".format(key) ):
                     os.system("cp tmp_{}/rwgt_{}.tar.gz ".format(args.cardname, key) + args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
                 else:
@@ -746,9 +785,12 @@ if __name__ == "__main__":
 
             
             else:
-                os.system("tar axf rwgt_" + str(key) + "_" + args.cardname + "_output.tar.xz")
-                os.system("mv rwgt/* " + args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
-                os.system("rm -rf rwgt")
+                #os.system("tar axf rwgt_" + str(key) + "_" + args.cardname + "_output.tar.xz")
+                #os.system("mv rwgt/* " + args.cardname + "/" + args.cardname + "_gridpack/work/process/madevent/rwgt")
+                #os.system("rm -rf rwgt")
+                print("[ERROR]")
+                sys.exit(0)
+
 
     if any(i in ["precompile"] for i in args.task ): 
         # compiling reweight dirs
@@ -1028,7 +1070,7 @@ if __name__ == "__main__":
             # so it will always be available 
             if i == original: continue
 
-            os.system("tar -zcf {}.tar.gz {}".format(i[:-1], i[:-1]))
+            os.system("XZ_OPT=\"--lzma2=preset=9,dict=512MiB\" tar -cJpsf {}.tar.gz {}".format(i[:-1], i[:-1]))
 
             #removing the dir to actually save space
             os.system("rm -rf {}".format(i))
@@ -1070,12 +1112,12 @@ if __name__ == "__main__":
 
         # os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
 
-        os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), os.path.join(WORKDIR, "gridpack/runcmsgrid_2.sh")))
+        os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), os.path.join(WORKDIR, "gridpack/runcmsgrid_LO_tar.sh")))
 
         os.chdir(os.path.join(WORKDIR, "gridpack"))
 
-        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid_2.sh".format(scram_arch))
-        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid_2.sh".format(cmssw_version))
+        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid_LO_tar.sh".format(scram_arch))
+        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid_LO_tar.sh".format(cmssw_version))
         
         pdfExtraArgs=""
 
@@ -1087,7 +1129,7 @@ if __name__ == "__main__":
         out = subprocess.Popen(["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         pdfSysArgs,stderr = out.communicate()
 
-        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid_2.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
+        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid_LO_tar.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
 
 
 
