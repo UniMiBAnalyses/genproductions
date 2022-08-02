@@ -256,6 +256,9 @@ transfer_output_remaps = \"{card_name}.log = {exec_name}.log\"
 +IsGridpack=true
 +GridpackCard = \"{card_name}\"
 
+stream_error = True
+stream_output = True
+
 +REQUIRED_OS = \"rhel7\"
 request_cpus = 2
 request_memory = 5Gb
