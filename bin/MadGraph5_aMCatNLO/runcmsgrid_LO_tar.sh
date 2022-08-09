@@ -158,7 +158,7 @@ if [ -e ./madevent/Cards/reweight_card.dat ]; then
       cd ..
 
       # remove untarred directory only if the tarred version is present
-      if [ -f madevent/rwgt/"$rwgt_folder".tar.gz ]; then  
+      if [ -f madevent/rwgt/"$rwgt_folder".tar.xz ]; then  
         rm -rf madevent/rwgt/"$rwgt_folder"
       fi
       
