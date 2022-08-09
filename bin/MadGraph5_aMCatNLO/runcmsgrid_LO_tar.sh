@@ -134,7 +134,7 @@ doreweighting=0
 
 # Modify script to actualy change rwgt card at each point untarring 
 # rwgt directories containing both initial and fina matrix elements
-if [ -d ./madevent/rw_cards ]; then
+if [ -e ./madevent/Cards/reweight_card.dat ]; then
   doreweighting=1
   #setup 
   mkdir -p ./madevent/Events/GridRun_${rnum}/
