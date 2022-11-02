@@ -278,7 +278,7 @@ def build_rew_dict_scratch(operators, change_process , model, append_SM=False):
         rwgt_points += mandatory
 
         # first append a comment line
-        rwgt_points.append("# SM")
+        rwgt_points.append("# SM\n")
         # change rwgt direcrory 
         rwgt_points.append("change rwgt_dir rwgt/rwgt_{}\n".format(tag))
         # change model
@@ -447,7 +447,7 @@ if __name__ == "__main__":
     parser.add_argument('-add_sm_point', '--add_sm_point',      dest='add_sm_point',        help='When building the reweighting, this will also add the SM point (e.g. if your codegen and integrate started from an EFT point). Default is false!', required = False, default=False, action="store_true")
     parser.add_argument('-change_process', '--change_process',  dest='change_process',      help='If args.cr is specified, add this to change process in reweight card', required = False, default="", type=str)
     parser.add_argument('-m', '--model',                        dest='model',               help='If args.cr is specified, add this to change the baseline model. Default is SMEFTsim_topU3l_MwScheme_UFO_b_massless', required = False, default="SMEFTsim_topU3l_MwScheme_UFO_b_massless", type=str)
-
+    parser.add_argument('-appendsm', '--appendsm',            dest='appendsm',        help='If turned on at reweight point also SMlimit massless model will be imported and weight computed', required = False, default=False, action="store_true")
 
     args = parser.parse_args()
 
@@ -498,7 +498,7 @@ if __name__ == "__main__":
     else:
         operators = []
         execfile("operators.py")
-        rd = build_rew_dict_scratch(operators, args.change_process, args.model)
+        rd = build_rew_dict_scratch(operators, args.change_process, args.model, append_SM=args.appendsm)
     
     if any(i in ["rew", "all"] for i in args.task ):
         # write the separate reweight point in a file
