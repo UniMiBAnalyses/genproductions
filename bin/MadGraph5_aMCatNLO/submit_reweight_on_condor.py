@@ -65,7 +65,10 @@ def make_tarball(WORKDIR, iscmsconnect, PRODHOME, CARDSDIR, CARDNAME, scram_arch
 
     f.write("echo  \"---> Creating tarball\"\n")
     f.write("eval `scram runtime -sh`\n")
-
+    
+    # This is added just because it does not work anymore with xz + tar on CMSSW_10_6_19
+    # I do not why
+    f.write("cd /home/gboldrin/CMSSW_11_1_4/src/ && cmsenv && cd -\n")
     f.write("cd gridpack\n")
 
     f.write("if [ {} -gt 0 ]; then\n".format(1 if iscmsconnect else 0))
@@ -109,7 +112,7 @@ def make_tarball(WORKDIR, iscmsconnect, PRODHOME, CARDSDIR, CARDNAME, scram_arch
     os.system("./compress.sh")
 
     # remove it so it won't be tarred in the gridpack
-    os.system("rm compress.sh")
+    #os.system("rm compress.sh")
 
     return
 
@@ -753,15 +756,15 @@ if __name__ == "__main__":
 
         print("COPIO NUOVI SCRIPT")
         # Copying the new script into this directory 
-        os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), os.path.join(WORKDIR, "gridpack/runcmsgrid_LO_tar.sh")))
+        os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), os.path.join(WORKDIR, "gridpack/runcmsgrid.sh")))
 
 
         os.chdir(os.path.join(WORKDIR, "gridpack"))
 
         os.system("ls")
 
-        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid_LO_tar.sh".format(scram_arch))
-        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid_LO_tar.sh".format(cmssw_version))
+        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid.sh".format(scram_arch))
+        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid.sh".format(cmssw_version))
         
         pdfExtraArgs=""
 
@@ -773,7 +776,7 @@ if __name__ == "__main__":
         out = subprocess.Popen(["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         pdfSysArgs,stderr = out.communicate()
 
-        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid_LO_tar.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
+        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
 
         os.system("ls")
 
@@ -797,11 +800,11 @@ if __name__ == "__main__":
             
 
         os.chdir("gridpack")
-        print("---> Copy runcmsgrid_LO.sh into gridpack/runcmsgrid.sh")
-        os.system("cp {}/runcmsgrid_LO.sh ./runcmsgrid.sh".format(PRODHOME))
+        print("---> Copy runcmsgrid.sh into gridpack/runcmsgrid_LO.sh")
+        os.system("cp {}/runcmsgrid_LO.sh ./runcmsgrid_LO.sh".format(PRODHOME))
 
-        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid.sh".format(scram_arch))
-        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid.sh".format(cmssw_version))
+        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid_LO.sh".format(scram_arch))
+        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid_LO.sh".format(cmssw_version))
         
         pdfExtraArgs=""
 
@@ -813,7 +816,7 @@ if __name__ == "__main__":
         out = subprocess.Popen(["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         pdfSysArgs,stderr = out.communicate()
 
-        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
+        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid_LO.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
 
         print("---> Clean unneeded files for generation")
         #clean unneeded files for generation
@@ -1038,12 +1041,12 @@ if __name__ == "__main__":
 
         # os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
 
-        os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), os.path.join(WORKDIR, "gridpack/runcmsgrid_LO_tar.sh")))
+        os.system("cp {} {}".format(os.path.join(PRODHOME, "runcmsgrid_LO_tar.sh"), os.path.join(WORKDIR, "gridpack/runcmsgrid.sh")))
 
         os.chdir(os.path.join(WORKDIR, "gridpack"))
 
-        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid_LO_tar.sh".format(scram_arch))
-        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid_LO_tar.sh".format(cmssw_version))
+        os.system("sed -i s/SCRAM_ARCH_VERSION_REPLACE/{}/g runcmsgrid.sh".format(scram_arch))
+        os.system("sed -i s/CMSSW_VERSION_REPLACE/{}/g runcmsgrid.sh".format(cmssw_version))
         
         pdfExtraArgs=""
 
@@ -1055,7 +1058,7 @@ if __name__ == "__main__":
         out = subprocess.Popen(["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         pdfSysArgs,stderr = out.communicate()
 
-        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid_LO_tar.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
+        os.system("sed -i s/PDF_SETS_REPLACE/{pdfSysArgs}/g runcmsgrid.sh".format(pdfSysArgs=pdfSysArgs[:-1]))
 
 
     print("--> Done <---")
