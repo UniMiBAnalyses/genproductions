@@ -469,7 +469,7 @@ if __name__ == "__main__":
     helpers_dir=os.path.join(PRODHOME, "Utilities")
     WORKDIR = os.path.join(PRODHOME, args.cardname, args.cardname+"_gridpack", "work") 
     genp_name = PRODHOME.split("/bin/MadGraph5_aMCatNLO")[0].split("/")[-1]
-    script_dir=os.path.join(PRODHOME.split(genp_name)[0], "genproductions/", "Utilities/scripts")
+    script_dir=os.path.join(PRODHOME.split(genp_name)[0], genp_name + "/", "Utilities/scripts")
     cmssw_version=args.cmssw
     scram_arch=args.scramarch
     MGBASEDIRORIG = "MG5_aMC_v2_6_5"
