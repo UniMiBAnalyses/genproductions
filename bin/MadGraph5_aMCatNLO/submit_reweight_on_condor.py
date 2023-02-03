@@ -375,6 +375,7 @@ def build_rew_dict_scratch(operators, change_process , model, append_SM=False):
     return rew_d
 
 
+
 def build_rew_dict(rew_card):
     f = open(rew_card, 'r')
     contents = f.readlines()
@@ -469,7 +470,7 @@ if __name__ == "__main__":
     helpers_dir=os.path.join(PRODHOME, "Utilities")
     WORKDIR = os.path.join(PRODHOME, args.cardname, args.cardname+"_gridpack", "work") 
     genp_name = PRODHOME.split("/bin/MadGraph5_aMCatNLO")[0].split("/")[-1]
-    script_dir=os.path.join(PRODHOME.split(genp_name)[0], "genproductions/", "Utilities/scripts")
+    script_dir=os.path.join(PRODHOME.split(genp_name)[0], genp_name + "/", "Utilities/scripts")
     cmssw_version=args.cmssw
     scram_arch=args.scramarch
     MGBASEDIRORIG = "MG5_aMC_v2_6_5"
@@ -772,7 +773,7 @@ if __name__ == "__main__":
             pdfExtraArgs+="--is5FlavorScheme"
         
         print("---> Retrieve pdf for {} flavour scheme".format(5 if args.is5FlavorScheme else 4))
-
+        print(" ".join(st for st in ["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)]))
         out = subprocess.Popen(["python", "{}/getMG5_aMC_PDFInputs.py".format(script_dir),  "-f",  "systematics", "-c",  "2017", "{}".format(pdfExtraArgs)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         pdfSysArgs,stderr = out.communicate()
 
