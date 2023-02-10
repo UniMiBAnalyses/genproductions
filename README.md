@@ -127,6 +127,117 @@ INFO:  Idle: 0,  Running: 423,  Completed: 179 [  3m 19s  ]
 
 You can see that condor submission can handle >10 times simultaneous jobs that local generation (and your jobs won't be centrally killed by cmsconnect mainteiners as you won't overload the machines).
 
+## Sumbit the reweight step on condor
+
+This branch cloned from genproduction was built to parallelize the reweight step on condor nodes. This comes useful when the initial matrix element is so big in term of memory consumption that the reweighting step (which runs locally) will fail on local machines with limited amount of resources. Also the parallelisation come at hand when the reweight point might differ from the integration ones (e.g. starting CODEGEN and INTEGRATE from SM and reweight to EFT space). For example you generate CODEGEN from $cW$ and reweight to all possible operators of the Warsaw basis which result in thousands of reweight points impossible to compute serially (remember that if the stgarting phase space is significantly different from the reweight one this method is not guaranteed to close and you should always compare the results with a benchmark scenario for example predictions from Amplitude Decomposition ).
+
+In order to do that a script ```submit_reweight_on_condor.py``` is provided.
+
+In the cards folder, as stated in previous points, you need to create a process card and a run card ```<proc_name_proc_card.dat``` and ```<proc_name_run_card.dat``` . Do not specify any reweight card at this point.
+
+Run the gridpack generation as usual for CODEGEN and INTEGRATE:
+
+```
+./submit_cmsconnect_gridpack_generation.sh <proc_name> <cards_path> ...
+```
+
+Upon completion you should see the follwoing message: ```gridpack_generation_EFT.sh: line 937: REWEIGHT_ON_CONDOR: unbound variable```
+It is an error message which prevents the creation of the gridpack tarball and allows us to run the reweight step from the output of CODEGEN and INTEGRATE.
+
+Open the file ```operators.py``` and specify the operators you want to reweight on by specifying the operator number in this list:
+https://github.com/UniMiBAnalyses/genproductions/blob/WV_semilep_EFT/bin/MadGraph5_aMCatNLO/operators.py#L3
+
+Then run the ```sumit_reweight_on_condor.py``` script. It supports different command line arguments:
+
+```
+python submit_reweight_on_condor.py --h
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -cn CARDNAME, --cardname CARDNAME
+                        The name of the cards, <name>_proc_card.dat
+  -cp CARDPATH, --cardpath CARDPATH
+                        The path to the cards directory
+  -t TASK [TASK ...], --task TASK [TASK ...]
+                        Tasks to be executed (separated by a space). Default
+                        is all. Can choose between: rew (only write rew cards
+                        and execs), tar (Create tarball of input gridpack),
+                        sub (submit all jobs), mv (move all results once jobs
+                        are finished in the right position), clean (clean all
+                        files created that are not useful), prepare (prepare
+                        final gridpack, set of sed and paths), compress
+                        (create the final gridpack) createsymlink (rw_me
+                        directories are a waste of space. Just retain one and
+                        create sym links to the first)
+  -sf SUBFOLDER, --subfolder SUBFOLDER
+                        The path to the folder where .jid, exec and reweight
+                        cards will be saved
+  -is5f, --is5FlavorScheme
+                        Is the gridpack intended for 5fs? Default is true
+  -scram SCRAMARCH, --scramarch SCRAMARCH
+                        Scram arch version required. Default is
+                        slc7_amd64_gcc700
+  -cmssw CMSSW, --cmssw CMSSW
+                        CMSSW version required. Default is CMSSW_10_6_19
+  -iscmsc, --iscmsconnect
+                        Are you working on cmsconnect? Default is true
+  -cr, --createreweight
+                        File operator.py will be imported and restriction
+                        cards created
+  -change_process CHANGE_PROCESS, --change_process CHANGE_PROCESS
+                        If args.cr is specified, add this to change process in
+                        reweight card
+  -m MODEL, --model MODEL
+                        If args.cr is specified, add this to change the
+                        baseline model. Default is
+                        SMEFTsim_topU3l_MwScheme_UFO_b_massless
+  -appendsm, --appendsm
+                        If turned on at reweight point also SMlimit massless
+                       model will be imported and weight computed
+```
+
+
+```-cn``` and ```-cp``` arguments are the same ones you specified when running ```./submit_cmsconnect_gridpack_generation.sh``` scripts. ```-sf``` is the path to a subfolder (if does not exist it will be created) that will store the condor files needed for submission. All the other points are self-expllanatory and usually will be set by default arguments to a reasonable value. Be sure that the flavour scheme, cmssw version and scram arch versions follow your prerequisites. The argument ```-iscmsc``` differentiates the gridpack generation on cmsconnect and lxplus (some paths / configuration differ between the two so be sure to be consistent). The argument ```-cr``` will automatically create all necessary reweight cards to be run on condor nodes for a particular reweight point (c=+1, c=-1, SM, c1=1 c2=1), if you want to select ad hoc values for reweight points you have to modify yourself the script. ```-appendsm``` will also add a condor job for the SM hypothesis importing the restriction ```restrict_SM_limit_massless.dat```. If you started the CODEGEN and INTEGRATE from SM point (e.g. ```generate p p > l+ l- QCD=0 NP=0```) you will need to change the process definition to allow EFT insertion (```NP=0``` should be converted in ```NP=1,2,3,...```). The argument ```-change_process``` allows the user to do that. If the process foresee an additional lines (e.g. from proc card ```generate p p > w+ \n add process p p > w-```) you can split the lines separating with a comma (e.g. ```-change_process "change process p p > w+ NP=1", "add process p p > w- NP=1"```. The argument ```-m``` lets you change the model from initial hypothesis.
+
+The argument `-t` specifies the task you want to execute. The script is modular so you can check the output at each stage.
+The logical order of the tasks is the following: 
+
+- Create reweight card and condor submit files: ```-t rew```
+- Tar the output of CODEGEN + INTEGRATE with reweight card: ```-t tar```
+- Submit condor jobs: ```-t sub```
+- Check the output of jobs and print unfinished / failed jobs: ```-t check```
+- Resubmit failed jobs (ignore jobs running): ```-t resub```
+- Move all reweight outputs to the appropriate directory inside gridpack folder: ```-t mv```
+- Prepare the gridpack, export paths, create merge files for matching/merging etc. : ```-t prepare```
+- Compress the gridpack into the usual tarball: ```-t compress```
+- Clean all files created during the process: ```-t clean```
+
+An examples worflow would be:
+
+```
+python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t rew -appendsm -iscmsc
+```
+
+So the script expects a folder with two cards in the following location: ```cards/emVjj/emVjj_ewk_dim6_proc_card.dat```, ```cards/emVjj/emVjj_ewk_dim6_run_card.dat```, the gridpack in the current directory named ```emVjj_ewk_dim6``` containing two subfolders (output of CODEGEN and INTEGRATE): ```emVjj_ewk_dim6_gridpack  emVjj_ewk_dim6_output.tar.xz```.
+The script will generate a nerw folder named ```condor_sub_emVjj``` with a bunh of ```.sh, .jdl``` files with  self-explanatory names connecting the process definition and the operators you selected and the reweight card. Inspect the reweight card to check that everything behaves correctly. It will assume 5 flavour scheme, CMSSW=CMSSW_10_6_19, SCRAMARCH=slc7_amd64_gcc700. It will also generate the SM reweight point.
+
+The execution proceeds as follows:
+```
+python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t tar -appendsm -iscmsc
+python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t sub -appendsm -iscmsc
+python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t check -appendsm -iscmsc # this should be executed until completion of jobs
+# python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t resub -appendsm -iscmsc # only in case of errors
+python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t mv prepare -appendsm -iscmsc
+python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t compress -appendsm -iscmsc
+python submit_reweight_on_condor.py -cn emVjj_ewk_dim6 -cp cards/emVjj -sf condor_sub_emVjj -cr  -t clean -appendsm -iscmsc
+```
+
+
+Further informations can be found in this slides including other practical examples:
+
+https://indico.cern.ch/event/1175148/contributions/4935576/attachments/2474559/4246168/Boldrini_PHGen_04072022.pdf
+
+
 
 ## Screen (or tmux)
 
