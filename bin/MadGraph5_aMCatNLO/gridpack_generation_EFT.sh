@@ -262,6 +262,7 @@ make_gridpack () {
       # cd SMEFTsim_U35_MwScheme_UFO_b_massless
       cd SMEFTsim_topU3l_MwScheme_UFO_b_massless
       # wget all restrictions
+      wget --no-check-certificate https://gboldrin.web.cern.ch/gboldrin/generators/restrict_VBS_WZ_massless.dat
       wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/restrict_cHWB_cHDD_cHl1_cHl3_cHq1_cHq3_cll_cll1_massless.dat
       wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/restrict_cW_cHWB_cHDD_cHl1_cHl3_cHq1_cHq3_cll_cll1_massless.dat
       wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/restrict_cW_cHWB_cHDD_cll1_cHl1_cHl3_cHq1_cHq3_massless.dat
