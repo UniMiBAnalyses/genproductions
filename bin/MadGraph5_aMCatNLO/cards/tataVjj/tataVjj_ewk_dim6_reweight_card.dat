@@ -1,0 +1,543 @@
+change helicity False
+change rwgt_dir rwgt
+
+# SM rwgt_1
+launch --rwgt_name=SM
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cW=-1 rwgt_2
+launch --rwgt_name=cW_m1
+   set SMEFT 2 -0.2
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cW=1 rwgt_3
+launch --rwgt_name=cW
+   set SMEFT 2 0.2
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHWB=-1 rwgt_4
+launch --rwgt_name=cHWB_m1
+   set SMEFT 2 0
+   set SMEFT 9 -1
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHWB=1 rwgt_5
+launch --rwgt_name=cHWB
+   set SMEFT 2 0
+   set SMEFT 9 1
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHbox=-1 rwgt_6
+launch --rwgt_name=cHbox_m1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 -1
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHbox=1 rwgt_7
+launch --rwgt_name=cHbox
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 1
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHW=-1 rwgt_8
+launch --rwgt_name=cHW_m1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 -1
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHW=1 rwgt_9
+launch --rwgt_name=cHW
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 1
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHl1=-1 rwgt_10
+launch --rwgt_name=cHl1_m1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 -1
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHl1=1 rwgt_11
+launch --rwgt_name=cHl1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 1
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHB=-1 rwgt_12
+launch --rwgt_name=cHB_m1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 -1
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHB=1 rwgt_13
+launch --rwgt_name=cHB
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 1
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHQ1=-1 rwgt_14
+launch --rwgt_name=cHQ1_m1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 -1
+   set SMEFT 26 0
+
+
+# cHQ1=1 rwgt_15
+launch --rwgt_name=cHQ1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 1
+   set SMEFT 26 0
+
+
+# cHj1=-1 rwgt_16
+launch --rwgt_name=cHj1_m1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 -1
+
+
+# cHj1=1 rwgt_17
+launch --rwgt_name=cHj1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 1
+
+
+# cW=1, cHWB=1 rwgt_18
+launch --rwgt_name=cW_cHWB
+   set SMEFT 2 0.2
+   set SMEFT 9 1
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cW=1, cHbox=1 rwgt_19
+launch --rwgt_name=cW_cHbox
+   set SMEFT 2 0.2
+   set SMEFT 9 0
+   set SMEFT 4 1
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cW=1, cHW=1 rwgt_20
+launch --rwgt_name=cW_cHW
+   set SMEFT 2 0.2
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 1
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cW=1, cHl1=1 rwgt_21
+launch --rwgt_name=cW_cHl1
+   set SMEFT 2 0.2
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 1
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cW=1, cHB=1 rwgt_22
+launch --rwgt_name=cW_cHB
+   set SMEFT 2 0.2
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 1
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cW=1, cHQ1=1 rwgt_23
+launch --rwgt_name=cW_cHQ1
+   set SMEFT 2 0.2
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 1
+   set SMEFT 26 0
+
+
+# cW=1, cHj1=1 rwgt_24
+launch --rwgt_name=cW_cHj1
+   set SMEFT 2 0.2
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 1
+
+
+# cHWB=1, cHbox=1 rwgt_25
+launch --rwgt_name=cHWB_cHbox
+   set SMEFT 2 0
+   set SMEFT 9 1
+   set SMEFT 4 1
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHWB=1, cHW=1 rwgt_26
+launch --rwgt_name=cHWB_cHW
+   set SMEFT 2 0
+   set SMEFT 9 1
+   set SMEFT 4 0
+   set SMEFT 7 1
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHWB=1, cHl1=1 rwgt_27
+launch --rwgt_name=cHWB_cHl1
+   set SMEFT 2 0
+   set SMEFT 9 1
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 1
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHWB=1, cHB=1 rwgt_28
+launch --rwgt_name=cHWB_cHB
+   set SMEFT 2 0
+   set SMEFT 9 1
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 1
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHWB=1, cHQ1=1 rwgt_29
+launch --rwgt_name=cHWB_cHQ1
+   set SMEFT 2 0
+   set SMEFT 9 1
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 1
+   set SMEFT 26 0
+
+
+# cHWB=1, cHj1=1 rwgt_30
+launch --rwgt_name=cHWB_cHj1
+   set SMEFT 2 0
+   set SMEFT 9 1
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 1
+
+
+# cHbox=1, cHW=1 rwgt_31
+launch --rwgt_name=cHbox_cHW
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 1
+   set SMEFT 7 1
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHbox=1, cHl1=1 rwgt_32
+launch --rwgt_name=cHbox_cHl1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 1
+   set SMEFT 7 0
+   set SMEFT 103 1
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHbox=1, cHB=1 rwgt_33
+launch --rwgt_name=cHbox_cHB
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 1
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 1
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHbox=1, cHQ1=1 rwgt_34
+launch --rwgt_name=cHbox_cHQ1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 1
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 1
+   set SMEFT 26 0
+
+
+# cHbox=1, cHj1=1 rwgt_35
+launch --rwgt_name=cHbox_cHj1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 1
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 1
+
+
+# cHW=1, cHl1=1 rwgt_36
+launch --rwgt_name=cHW_cHl1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 1
+   set SMEFT 103 1
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHW=1, cHB=1 rwgt_37
+launch --rwgt_name=cHW_cHB
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 1
+   set SMEFT 103 0
+   set SMEFT 8 1
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHW=1, cHQ1=1 rwgt_38
+launch --rwgt_name=cHW_cHQ1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 1
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 1
+   set SMEFT 26 0
+
+
+# cHW=1, cHj1=1 rwgt_39
+launch --rwgt_name=cHW_cHj1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 1
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 1
+
+
+# cHl1=1, cHB=1 rwgt_40
+launch --rwgt_name=cHl1_cHB
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 1
+   set SMEFT 8 1
+   set SMEFT 27 0
+   set SMEFT 26 0
+
+
+# cHl1=1, cHQ1=1 rwgt_41
+launch --rwgt_name=cHl1_cHQ1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 1
+   set SMEFT 8 0
+   set SMEFT 27 1
+   set SMEFT 26 0
+
+
+# cHl1=1, cHj1=1 rwgt_42
+launch --rwgt_name=cHl1_cHj1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 1
+   set SMEFT 8 0
+   set SMEFT 27 0
+   set SMEFT 26 1
+
+
+# cHB=1, cHQ1=1 rwgt_43
+launch --rwgt_name=cHB_cHQ1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 1
+   set SMEFT 27 1
+   set SMEFT 26 0
+
+
+# cHB=1, cHj1=1 rwgt_44
+launch --rwgt_name=cHB_cHj1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 1
+   set SMEFT 27 0
+   set SMEFT 26 1
+
+
+# cHQ1=1, cHj1=1 rwgt_45
+launch --rwgt_name=cHQ1_cHj1
+   set SMEFT 2 0
+   set SMEFT 9 0
+   set SMEFT 4 0
+   set SMEFT 7 0
+   set SMEFT 103 0
+   set SMEFT 8 0
+   set SMEFT 27 1
+   set SMEFT 26 1
+
+
