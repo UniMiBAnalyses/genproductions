@@ -705,12 +705,13 @@ make_gridpack () {
           extract_width $isnlo $WORKDIR $CARDSDIR ${name}
       fi
       
-      if [ -n "$REWEIGHT_ON_CONDOR" ]; then 
-         if [ $REWEIGHT_ON_CONDOR ]; then 
-            echo "Reweighting on condor gone ok, exiting" 
-            exit 0
-         fi
-      fi 
+      # if [ -n "$REWEIGHT_ON_CONDOR" ]; then 
+      #    if [ $REWEIGHT_ON_CONDOR ]; then 
+      #       echo "Reweighting on condor gone ok, exiting" 
+      #       exit 0
+      #    fi
+      # fi
+ 
       #prepare madspin grids if necessary
       if [ -e $CARDSDIR/${name}_madspin_card.dat ]; then
         echo "import $WORKDIR/unweighted_events.lhe.gz" > madspinrun.dat
