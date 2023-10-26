@@ -936,12 +936,12 @@ if [ "${name}" != "interactive" ]; then
     # Re-enable set -e
     set -e
 
-    if [ -n "$REWEIGHT_ON_CONDOR" ]; then 
-      if [ $REWEIGHT_ON_CONDOR ]; then 
-        echo "Reweighting on condor gone ok, exiting" 
-        exit 0
-      fi
-    fi 
+    # if [ -n "$REWEIGHT_ON_CONDOR" ]; then 
+    #   if [ $REWEIGHT_ON_CONDOR ]; then 
+    #     echo "Reweighting on condor gone ok, exiting" 
+    #     exit 0
+    #   fi
+    # fi 
 
     echo "Saving log file(s)"
     cd $WORKDIR/gridpack
