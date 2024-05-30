@@ -1,0 +1,38 @@
+#************************************************************
+#*                     MadGraph5_aMC@NLO                    *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*         VERSION 2.6.5                 2018-02-03         *
+#*                                                          *
+#*    The MadGraph5_aMC@NLO Development Team - Find us at   *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph5_aMC@NLO         *
+#*                                                          *
+#*     run as ./bin/mg5_aMC  filename                       *
+#*                                                          *
+#************************************************************
+set default_unset_couplings 99
+set group_subprocesses Auto
+set ignore_six_quark_processes False
+set loop_optimized_output True
+set low_mem_multicore_nlo_generation False
+set loop_color_flows False
+set gauge unitary
+set complex_mass_scheme False
+set max_npoint_for_channel 0
+import model SMEFTatNLO-c3pl1_c3pl3_cQe3_cpWB_cQl31_cpDC_cpq3i_cpQM_cpu_cblS3_cpta_cpQ3_cpl1_cQlM1_cQlM2_cQe2_cpl3_cQlM3_cpe_cQe1_cQl33_cpqMi_cpmu_cpd_c3pl2_cQl32_cpl2_cll1221_massless
+define p = g u u~ d d~ s s~ c c~ b b~
+define j = p
+define l+ = e+ mu+ ta+
+define l- = e- mu- ta-
+generate p p > l+ l- QED=2 QCD=0 NP=2 [QCD]
+output zee_dim6_mll200_NLO -nojpeg

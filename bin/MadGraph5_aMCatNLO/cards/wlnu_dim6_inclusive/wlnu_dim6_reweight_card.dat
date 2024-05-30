@@ -1,0 +1,123 @@
+change helicity False
+change rwgt_dir rwgt
+
+# SM rwgt_1
+launch --rwgt_name=sm
+   set SMEFT 104 0
+   set SMEFT 28 0
+   set SMEFT 109 0
+   set SMEFT 107 0
+
+
+# cHl3=-1 rwgt_2
+launch --rwgt_name=chl3_m1
+   set SMEFT 104 -1
+   set SMEFT 28 0
+   set SMEFT 109 0
+   set SMEFT 107 0
+
+
+# cHl3=1 rwgt_3
+launch --rwgt_name=chl3
+   set SMEFT 104 1
+   set SMEFT 28 0
+   set SMEFT 109 0
+   set SMEFT 107 0
+
+
+# cHj3=-1 rwgt_4
+launch --rwgt_name=chj3_m1
+   set SMEFT 104 0
+   set SMEFT 28 -1
+   set SMEFT 109 0
+   set SMEFT 107 0
+
+
+# cHj3=1 rwgt_5
+launch --rwgt_name=chj3
+   set SMEFT 104 0
+   set SMEFT 28 1
+   set SMEFT 109 0
+   set SMEFT 107 0
+
+
+# clj3=-1 rwgt_6
+launch --rwgt_name=clj3_m1
+   set SMEFT 104 0
+   set SMEFT 28 0
+   set SMEFT 109 -1
+   set SMEFT 107 0
+
+
+# clj3=1 rwgt_7
+launch --rwgt_name=clj3
+   set SMEFT 104 0
+   set SMEFT 28 0
+   set SMEFT 109 1
+   set SMEFT 107 0
+
+
+# cll1=-1 rwgt_8
+launch --rwgt_name=cll1_m1
+   set SMEFT 104 0
+   set SMEFT 28 0
+   set SMEFT 109 0
+   set SMEFT 107 -1
+
+
+# cll1=1 rwgt_9
+launch --rwgt_name=cll1
+   set SMEFT 104 0
+   set SMEFT 28 0
+   set SMEFT 109 0
+   set SMEFT 107 1
+
+
+# cHl3=1, cHj3=1 rwgt_10
+launch --rwgt_name=chl3_chj3
+   set SMEFT 104 1
+   set SMEFT 28 1
+   set SMEFT 109 0
+   set SMEFT 107 0
+
+
+# cHl3=1, clj3=1 rwgt_11
+launch --rwgt_name=chl3_clj3
+   set SMEFT 104 1
+   set SMEFT 28 0
+   set SMEFT 109 1
+   set SMEFT 107 0
+
+
+# cHl3=1, cll1=1 rwgt_12
+launch --rwgt_name=chl3_cll1
+   set SMEFT 104 1
+   set SMEFT 28 0
+   set SMEFT 109 0
+   set SMEFT 107 1
+
+
+# cHj3=1, clj3=1 rwgt_13
+launch --rwgt_name=chj3_clj3
+   set SMEFT 104 0
+   set SMEFT 28 1
+   set SMEFT 109 1
+   set SMEFT 107 0
+
+
+# cHj3=1, cll1=1 rwgt_14
+launch --rwgt_name=chj3_cll1
+   set SMEFT 104 0
+   set SMEFT 28 1
+   set SMEFT 109 0
+   set SMEFT 107 1
+
+
+# clj3=1, cll1=1 rwgt_15
+launch --rwgt_name=clj3_cll1
+   set SMEFT 104 0
+   set SMEFT 28 0
+   set SMEFT 109 1
+   set SMEFT 107 1
+
+

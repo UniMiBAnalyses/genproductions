@@ -1,0 +1,36 @@
+#************************************************************
+#*                     MadGraph5_aMC@NLO                    *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*         VERSION 2.6.5                 2018-02-03         *
+#*                                                          *
+#*    The MadGraph5_aMC@NLO Development Team - Find us at   *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph5_aMC@NLO         *
+#*                                                          *
+#*     run as ./bin/mg5_aMC  filename                       *
+#*                                                          *
+#************************************************************
+set default_unset_couplings 99
+set group_subprocesses Auto
+set ignore_six_quark_processes False
+set loop_optimized_output True
+set low_mem_multicore_nlo_generation False
+set loop_color_flows False
+set gauge unitary
+set complex_mass_scheme False
+set max_npoint_for_channel 0
+import model SMEFTsim_topU3l_MwScheme_UFO_b_massless-cHj3_cHQ3_cHj1_cHbq_cbBRe_cHl1_cHd_clj1_cbl_cHQ1_cQl1_cQl3_clj3_clu_cHl3_ced_cHu_cld_cll1_cje_cbWRe_cHWB_cbe_cHDD_cQe_ceu_massless
+define p = g u u~ d d~ s s~ c c~ b b~
+define j = p
+generate p p > l+ l- SMHLOOP=0 QCD=0 NP=1
+output zee_dim6_mll_400_600 -nojpeg
