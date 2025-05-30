@@ -1,0 +1,12 @@
+zee_dim6_mll200-400_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz
+zee_dim6_mll50-100_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz
+zee_dim6_mll600-800_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz
+zee_dim6_mll800-1000_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz
+
+./gridpack_generation_EFT.sh zee_dim6_mll100-200 cards/DY_EFT_Gridpacks/DYEFTMll100-200
+
+./gridpack_generation_EFT.sh zee_dim6_mll400-600 cards/DY_EFT_Gridpacks/DYEFTMll400-600
+
+./gridpack_generation_EFT.sh zee_dim6_mll1000-1500 cards/DY_EFT_Gridpacks/DYEFTMll1000-1500
+
+./gridpack_generation_EFT.sh zee_dim6_mll1500-inf cards/DY_EFT_Gridpacks/DYEFTMll1500-inf

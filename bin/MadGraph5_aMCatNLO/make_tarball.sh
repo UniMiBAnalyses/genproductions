@@ -921,42 +921,4 @@ WORKDIR=$GEN_FOLDER/${name}_gridpack/work/
 is5FlavorScheme=-1
 if [ -z ${iscmsconnect:+x} ]; then iscmsconnect=0; fi
 
-if [ "${name}" != "interactive" ]; then
-    # Make PIPESTATUS inherit make_gridpack return/exit codes
-    set -o pipefail
-    # Do not exit main shell if make_gridpack fails. We want to return rather than exit if we are sourcing this script.
-    set +e
-    make_gridpack | tee $LOGFILE
-    pipe_status=$PIPESTATUS
-    # tee above will create a subshell, so exit calls inside function will just affect that subshell instance and return the exitcode in this shell.
-    # This breaks cases when the calls inside make_gridpack try to exit the main shell with some error, hence not having the gridpack directory.
-    # or not wanting to create a tarball.
-    # Explicitely return or exit accordingly if make_gridpack returned an error.
-    if [ $pipe_status -ne 0 ]; then
-      if [ "${BASH_SOURCE[0]}" != "${0}" ]; then return $pipe_status; else exit $pipe_status; fi
-    fi
-    # Also, step CODEGEN will try to exit with 0, but that will only affect the subshell.
-    # Explicitely exit the main shell (or return 0 if sourced) if jobstep == CODEGEN.
-    if [ "$jobstep" == "CODEGEN" ]; then
-      if [ "${BASH_SOURCE[0]}" != "${0}" ]; then return 0; else exit 0; fi
-    fi
-    # Re-enable set -e
-    set -e
-
-    # if [ -n "$REWEIGHT_ON_CONDOR" ]; then 
-    #   if [ $REWEIGHT_ON_CONDOR ]; then 
-    #     echo "Reweighting on condor gone ok, exiting" 
-    #     exit 0
-    #   fi
-    # fi 
-
-    echo "Saving log file(s)"
-    cd $WORKDIR/gridpack
-    for i in ${LOGFILE_NAME}*.log; do 
-        cp $i ${i/$LOGFILE_NAME/gridpack_generation}
-    done
-else
-    make_gridpack
-fi
-
 make_tarball
