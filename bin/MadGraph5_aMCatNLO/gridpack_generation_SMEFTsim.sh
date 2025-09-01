@@ -129,7 +129,6 @@ make_gridpack () {
     MG_EXT=".tar.gz"
     #MG=MG5_aMC_v2_6_5$MG_EXT
     MG=MG5_aMC_v2.6.5$MG_EXT
-    # MG=MG5_aMC_v2.9.9$MG_EXT
     MGSOURCE=https://cms-project-generators.web.cern.ch/cms-project-generators/$MG
     #MGSOURCE=https://gboldrin.web.cern.ch/gboldrin/generators/$MG
 
@@ -181,8 +180,8 @@ make_gridpack () {
 
 
       cd $MGBASEDIRORIG/madgraph/interface/
-      # rm reweight_interface.py
-      # wget http://gboldrin.web.cern.ch/gboldrin/generators/reweight_interface.py
+      rm reweight_interface.py
+      wget http://gboldrin.web.cern.ch/gboldrin/generators/reweight_interface.py
       cd -
     
       #############################################
@@ -259,18 +258,10 @@ make_gridpack () {
     
       #load extra models if needed
 
-      # wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/SMEFTsim_topU3l_MwScheme_UFO_b_massless.tar.gz
-      # cd models 
-      # tar -axvf ../SMEFTsim_topU3l_MwScheme_UFO_b_massless.tar.gz
-
-      wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/SMEFTatNLO.tar.gz
-      cd models
-      tar -axvf ../SMEFTatNLO.tar.gz
-
-      # wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/SMEFTsim_topU3l_MwScheme_propagatorhack_UFO_b_massless.tar.gz
-      # cd models
-      # tar xavf ../SMEFTsim_topU3l_MwScheme_propagatorhack_UFO_b_massless.tar.gz
-      # cp /afs/cern.ch/work/g/gboldrin/public/public/genproductions_unimib/bin/MadGraph5_aMCatNLO/cards/WV_semileptonic_01J_HT0To1000/restrict_cll1_cG_cHd_cHDD_cHj3_cjj38_cHWtil_cHj1_cju1_cuu8_cdd8_cuu1_cdd1_cHG_cHe_cHl1_cHWB_cHl3_cju8_cjd1_clu_cWtil_clj3_cjj11_cHu_ceu_cHWBtil_ced_clj1_cjj18_cGtil_cW_cld_cje_cjd8_cud8_cud1_cjj31_cHGtil_massless.dat SMEFTsim_topU3l_MwScheme_propagatorhack_UFO_b_massless
+      wget --no-check-certificate http://gboldrin.web.cern.ch/gboldrin/generators/SMEFTsim_topU3l_MwScheme_UFO_b_massless.tar.gz
+      cd models 
+      tar -axvf ../SMEFTsim_topU3l_MwScheme_UFO_b_massless.tar.gz
+      
       cd .. 
       if [ -e $CARDSDIR/${name}_extramodels.dat ]; then
         echo "Loading extra models specified in $CARDSDIR/${name}_extramodels.dat"
@@ -495,16 +486,8 @@ make_gridpack () {
     prepare_run_card $name $CARDSDIR $is5FlavorScheme $script_dir $isnlo
     
     #copy provided custom fks params or cuts
-    # if [ -e $CARDSDIR/${name}_cuts.f ]; then
-    #   echo "copying custom cuts.f file"
-    #   cp $CARDSDIR/${name}_cuts.f ./SubProcesses/cuts.f
-    # fi
-
-    # Copy provided custom cuts for both LO and NLO cases
     if [ -e $CARDSDIR/${name}_cuts.f ]; then
-      echo ">>> Copying custom cuts.f file to Cuts/ (NLO) and SubProcesses/ (LO)"
-      mkdir -p ./Cuts
-      cp $CARDSDIR/${name}_cuts.f ./Cuts/cuts.f
+      echo "copying custom cuts.f file"
       cp $CARDSDIR/${name}_cuts.f ./SubProcesses/cuts.f
     fi
     
