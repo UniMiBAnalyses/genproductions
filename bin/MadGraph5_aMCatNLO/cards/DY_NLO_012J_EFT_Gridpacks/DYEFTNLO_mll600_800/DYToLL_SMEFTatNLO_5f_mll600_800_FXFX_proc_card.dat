@@ -1,0 +1,10 @@
+import model SMEFTatNLO-cQlM1_cQlM2_cQl31_cQl32_cQe1_cQe2_cQlM3_cQl33_cQe3_cll1221_cpDC_cpWB_cpl1_cpl2_cpl3_c3pl1_c3pl2_c3pl3_cpe_cpmu_cpta_cpqMi_cpq3i_cpQ3_cpQM_cpu_cpd_massless
+
+define j = g u c d s u~ c~ d~ s~ b b~
+define p = g u c d s u~ c~ d~ s~ b b~
+define l+ = e+ mu+ ta+
+define l- = e- mu- ta-
+
+generate p p > l+ l- QED=2 QCD=0 NP=2 [QCD]
+
+output DYToLL_SMEFTatNLO_5f_mll600_800_FXFX -nojpeg

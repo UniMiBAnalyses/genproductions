@@ -1,0 +1,37 @@
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c      written by the UFO converter
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      REAL*16 G
+      COMMON/MP_STRONG/ G
+
+      COMPLEX*32 GAL(2)
+      COMMON/MP_WEAK/ GAL
+
+      COMPLEX*32 MU_R
+      COMMON/MP_RSCALE/ MU_R
+
+
+      REAL*16 MDL_MT,MDL_MW,MDL_MZ,MDL_MTA,MDL_MB,MDL_MH
+
+      COMMON/MP_MASSES/ MDL_MT,MDL_MW,MDL_MZ,MDL_MTA,MDL_MB,MDL_MH
+
+
+      REAL*16 MDL_WZ,MDL_WH,MDL_WW,MDL_WT
+
+      COMMON/MP_WIDTHS/ MDL_WZ,MDL_WH,MDL_WW,MDL_WT
+
+
+      COMPLEX*32 UV_GQQB,UV_GQQT,UVWFCT_G_2,UVWFCT_G_1,R2_DDA,R2_UUA
+     $ ,R2_UUZ_V2,R2_UUZ_V5,R2_SXCW,R2_GGHB,R2_GGHT,R2_GGZUP,R2_GGWWCS
+     $ ,GC_4,GC_5,R2_GQQ,R2_QQQ,UV_GQQG_1EPS,UV_GQQQ_1EPS
+     $ ,UVWFCT_G_2_1EPS,GC_1,GC_2,GC_7,GC_22,GC_23,GC_24,GC_25,GC_28
+     $ ,GC_31,GC_33,GC_37,GC_38,GC_47
+
+      COMMON/MP_COUPLINGS/ UV_GQQB,UV_GQQT,UVWFCT_G_2,UVWFCT_G_1
+     $ ,R2_DDA,R2_UUA,R2_UUZ_V2,R2_UUZ_V5,R2_SXCW,R2_GGHB,R2_GGHT
+     $ ,R2_GGZUP,R2_GGWWCS,GC_4,GC_5,R2_GQQ,R2_QQQ,UV_GQQG_1EPS
+     $ ,UV_GQQQ_1EPS,UVWFCT_G_2_1EPS,GC_1,GC_2,GC_7,GC_22,GC_23,GC_24
+     $ ,GC_25,GC_28,GC_31,GC_33,GC_37,GC_38,GC_47
+
+

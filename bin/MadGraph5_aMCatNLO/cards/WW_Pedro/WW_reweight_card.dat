@@ -1,0 +1,37 @@
+change helicity False
+change rwgt_dir rwgt
+change mode LO
+
+# SM
+
+launch --rwgt_name=sm
+set SMEFT 2 0
+set SMEFT 5 0
+set SMEFT 9 0
+set SMEFT 21 0
+set SMEFT 22 0
+set SMEFT 24 0
+set SMEFT 25 0
+set SMEFT 30 0
+
+# Linear and Quadratic component
+
+launch --rwgt_name=cw
+set SMEFT 2 1
+set SMEFT 5 0
+set SMEFT 9 0
+set SMEFT 21 0
+set SMEFT 22 0
+set SMEFT 24 0
+set SMEFT 25 0
+set SMEFT 30 0
+
+launch --rwgt_name=cw_m1
+set SMEFT 2 -1
+set SMEFT 5 0
+set SMEFT 9 0
+set SMEFT 21 0
+set SMEFT 22 0
+set SMEFT 24 0
+set SMEFT 25 0
+set SMEFT 30 0

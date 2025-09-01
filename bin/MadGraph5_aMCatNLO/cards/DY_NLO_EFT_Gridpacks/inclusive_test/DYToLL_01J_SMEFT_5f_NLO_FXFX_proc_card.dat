@@ -1,0 +1,13 @@
+# set low_mem_multicore_nlo_generation True
+
+import model SMEFTatNLO-prova
+# import model SMEFTatNLO-cpWB_massless
+
+define j = g u c d s u~ c~ d~ s~ b b~
+define p = g u c d s u~ c~ d~ s~ b b~
+define l+ = e+ mu+ ta+
+define l- = e- mu- ta-
+
+generate p p > l+ l- QED=2 QCD=0 NP=2 [QCD]
+
+output DYToLL_01J_SMEFT_5f_NLO_FXFX -nojpeg

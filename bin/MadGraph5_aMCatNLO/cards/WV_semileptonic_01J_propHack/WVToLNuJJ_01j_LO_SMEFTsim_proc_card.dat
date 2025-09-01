@@ -1,0 +1,19 @@
+import model SMEFTsim_topU3l_MwScheme_propagatorhack_UFO_b_massless-cll1_cG_cHd_cHDD_cHj3_cjj38_cHWtil_cHj1_cju1_cuu8_cdd8_cuu1_cdd1_cHG_cHe_cHl1_cHWB_cHl3_cju8_cjd1_clu_cWtil_clj3_cjj11_cHu_ceu_cHWBtil_ced_clj1_cjj18_cGtil_cW_cld_cje_cjd8_cud8_cud1_cjj31_cHGtil_massless
+
+# 4f:
+define j = g u c d s u~ c~ d~ s~
+define p = g u c d s u~ c~ d~ s~
+
+define ell+ = e+ mu+ ta+
+define ell- = e- mu- ta-
+define vl = ve vm vt
+define vl~ = ve~ vm~ vt~
+
+
+generate p p > ell+ vl j j $$ t t~ h QCD=1 SMHLOOP=0 NPall<=2 NPprop^2<=2 @0
+add process p p > ell+ vl j j j $$ t t~ h QCD=1 SMHLOOP=0 NPall<=2 NPprop^2<=2 @1
+add process p p > ell- vl~ j j $$ t t~ h QCD=1 SMHLOOP=0 NPall<=2 NPprop^2<=2 @2
+add process p p > ell- vl~ j j j $$ t t~ h QCD=1 SMHLOOP=0 NPall<=2 NPprop^2<=2 @3
+
+output WVToLNuJJ_01j_LO_SMEFTsim -nojpeg
+
