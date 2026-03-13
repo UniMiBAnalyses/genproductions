@@ -10,7 +10,6 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--out", help="Out file name", required=True)
     parser.add_argument("-cr", "--change_model", help="Add a change model line to add new restriction at each reweight point", required=False, action="store_true")
     parser.add_argument("-dop", "--default_operators", nargs = "+", help="Comma separated list of operators that are turned on in the proc card. Will be set to zero in the reweight cards for SM", required=False, default="")
-    parser.add_argument("-topU3l", "--topU3l", action="store_true", default=False, help="flag to select topU3l operators, by default U35 operators involved")
     args = parser.parse_args()
 
 
@@ -201,7 +200,6 @@ if __name__ == "__main__":
     param_dict = {item[1]: {'block': item[2], 'value': item[3]} for item in params}
 
     full_ops = param_dict
-    if args.topU3l: full_ops = param_dict
     
     # begin
     print("---> Start")

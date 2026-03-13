@@ -1,0 +1,16 @@
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll50-100 cards/DY01J_EFT_Gridpacks/DYEFTMll50-100
+rm -rf zee01j_dim6_mll50-100
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll100-200 cards/DY01J_EFT_Gridpacks/DYEFTMll100-200
+rm -rf zee01j_dim6_mll100-200
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll200-400 cards/DY01J_EFT_Gridpacks/DYEFTMll200-400
+rm -rf zee01j_dim6_mll200-400
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll400-600 cards/DY01J_EFT_Gridpacks/DYEFTMll400-600
+rm -rf zee01j_dim6_mll400-600
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll600-800 cards/DY01J_EFT_Gridpacks/DYEFTMll600-800
+rm -rf zee01j_dim6_mll600-800
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll800-1000 cards/DY01J_EFT_Gridpacks/DYEFTMll800-1000
+rm -rf zee01j_dim6_mll800-1000
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll1000-1500 cards/DY01J_EFT_Gridpacks/DYEFTMll1000-1500
+rm -rf zee01j_dim6_mll1000-1500
+./gridpack_generation_SMEFTsim.sh zee01j_dim6_mll1500-inf cards/DY01J_EFT_Gridpacks/DYEFTMll1500-inf
+rm -rf zee01j_dim6_mll1500-inf

@@ -9,7 +9,7 @@ mkdir -p ${outdir}
 
 name=$(basename $carddir)
 scram_arch="slc7_amd64_gcc700"
-cmssw_version=""
+cmssw_version="CMSSW_10_6_19"
 
 rm ${outdir}/${name}_script.sh
 touch ${outdir}/${name}_script.sh
@@ -18,10 +18,10 @@ echo "source /cvmfs/cms.cern.ch/cmsset_default.sh" >> ${outdir}/${name}_script.s
 echo "git clone https://github.com/UniMiBAnalyses/genproductions.git " >> ${outdir}/${name}_script.sh
 
 echo "cd genproductions/bin/MadGraph5_aMCatNLO/" >> ${outdir}/${name}_script.sh
-echo "git checkout WV_semilep_EFT " >> ${outdir}/${name}_script.sh
+echo "git checkout covarell " >> ${outdir}/${name}_script.sh
 echo "mv \${_CONDOR_SCRATCH_DIR}/$(basename ${carddir}) cards_to_run" >> ${outdir}/${name}_script.sh
 echo "sed -i 's|/bin/generate_events|/bin/generate_events --nb_core=${nCpu}|g' gridpack_generation_EFT.sh" >> ${outdir}/${name}_script.sh
-echo "./gridpack_generation_EFT.sh ${name} cards_to_run local ALL ${scram_arch} ${cmssw_version}" >> ${outdir}/${name}_script.sh
+echo "./gridpack_generation_ROBERTO.sh ${name} cards_to_run local ALL ${scram_arch} ${cmssw_version}" >> ${outdir}/${name}_script.sh
 echo "cp *.xz $(dirname $(readlink -f ${outdir}/${name}_script.sh))/." >> ${outdir}/${name}_script.sh
 
 echo "\"" >> ${outdir}/${name}_script.sh

@@ -1,0 +1,12 @@
+set group_subprocesses False
+
+# import model SMEFTsim_topU3l_MwScheme_UFO_ctGpatched-cW_cHWB_cHDD_cHbox_cHW_cHl1_cHl3_cHj1_cHj3_cjj11_cjj31_cll_cll1_massless
+import model SMEFTsim_topU3l_MwScheme_UFO_ctGpatched-cW_cHW_cHl1_cHj1_cHj3_cjj11_cjj31_massless
+define p = g u c d s b u~ c~ d~ s~ b~
+define j = p
+define l+ = e+ mu+ 
+define l- = e- mu- 
+
+generate  p p > e+ e- mu+ mu- j j SMHLOOP=0 QCD=0 NP=1
+# generate s s > e+ e- mu+ mu- s s SMHLOOP=0 QCD=0 NP=1
+output ZZ2E2Mujj_EWK_dim6 -nojpeg

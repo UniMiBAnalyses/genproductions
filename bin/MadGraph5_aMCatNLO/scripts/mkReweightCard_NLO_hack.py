@@ -131,8 +131,8 @@ if __name__ == "__main__":
     # for Lin and Quad
     i = 2
     for op in args.op:
-        for k in [-1,1]:
-            if op in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] : k = k*50
+        for k in [-1.0,1.0]:
+            # if op in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] : k = k*50
             f.write("# {}={} rwgt_{}\n".format(op, k, i))
             if args.change_model:
                f.write("change rwgt_dir rwgt_{}\n".format(op.lower() if k>0 else op.lower()+"_m1"))
@@ -151,7 +151,7 @@ if __name__ == "__main__":
             f.write("\n\n")
                              
     for ops in list(combinations(args.op,2)):
-        f.write("# {}={}, {}={} rwgt_{}\n".format(ops[0], 1 if ops[0] not in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] else 50, ops[1], 1 if ops[1] not in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] else 50, i))
+        f.write("# {}={}, {}={} rwgt_{}\n".format(ops[0], 1.0 if ops[0] not in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] else 1.0, ops[1], 1.0 if ops[1] not in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] else 1.0, i))
         if args.change_model:
            f.write("change rwgt_dir rwgt_{}_{}\n".format(ops[0], ops[1])) 
            if os.path.isfile("SMEFTsim_U35_MwScheme_UFO/restrict_{}_{}_massless.dat".format(ops[0], ops[1])):
@@ -171,7 +171,7 @@ if __name__ == "__main__":
                if not op3 in ops:
                     f.write("   set {} {} {}\n".format(full_ops[op3]['block'], full_ops[op3]['value'], 0))
                else:
-                    f.write("   set {} {} {}\n".format(full_ops[op3]['block'], full_ops[op3]['value'], 1 if op3 not in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] else 50)) 
+                    f.write("   set {} {} {}\n".format(full_ops[op3]['block'], full_ops[op3]['value'], 1.0 if op3 not in ["cQlM1", "cQlM2", "cQlM3", "cQl31", "cQl32", "cQl33", "cQe1", "cQe2", "cQe3"] else 1.0)) 
                 
         i+=1
                 

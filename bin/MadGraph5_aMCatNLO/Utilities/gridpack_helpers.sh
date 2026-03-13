@@ -91,6 +91,7 @@ prepare_reweight () {
     if [ "$isnlo" -gt "0" ]; then
         cd $WORKDIR/processtmp
         config=./Cards/amcatnlo_configuration.txt
+	echo "nb_core = 1" >>  $config
     else
         cd $WORKDIR/process
 	    mkdir -p madevent/Events/pilotrun
@@ -118,6 +119,9 @@ prepare_reweight () {
         # Needed to get around python import errors
         rwgt_dir="$WORKDIR/process/rwgt"
         export PYTHONPATH=$rwgt_dir:$PYTHONPATH
+	export MG5AMC_FORCE_SERIAL_REWEIGHT=1
+	echo "-----> This is NLO Reweighitng"
+
         echo "0" | ./bin/aMCatNLO --debug reweight pilotrun
     else
         echo "0" | ./bin/madevent --debug reweight pilotrun

@@ -9,4 +9,4 @@ workqueue=${6}
 scram_arch=${7}
 cmssw_version=${8}
 
-bsub -q ${masterqueue} -C 0  -R "rusage[mem=${memory}:pool=${diskspace}]" "export PRODHOME=`pwd`; gridpack_generation.sh ${name} ${carddir} ${workqueue} ${scram_arch} ${cmssw_version}"
+bsub -q ${masterqueue} -C 0  -R "rusage[mem=${memory}:pool=${diskspace}]" "export PRODHOME=`pwd`; gridpack_generation_SMEFTsim.sh ${name} ${carddir} ${workqueue} ${scram_arch} ${cmssw_version}"

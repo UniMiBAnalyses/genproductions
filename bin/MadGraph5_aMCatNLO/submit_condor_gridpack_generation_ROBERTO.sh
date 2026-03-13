@@ -42,6 +42,8 @@ if [[ "${workqueue}" = "condor_spool" ]] && [[ $(pwd) =~ "/afs/" ]]; then
     exit 1
 fi
 
-scram_arch=$3
-cmssw_version=$4
-bash gridpack_generation_SMEFTsim.sh ${name} ${carddir} ${workqueue} ALL ${scram_arch} ${cmssw_version}
+# scram_arch=$3
+# cmssw_version=$4
+scram_arch=slc7_amd64_gcc700
+cmssw_version=CMSSW_10_6_19
+bash gridpack_generation_ROBERTO.sh ${name} ${carddir} ${workqueue} ALL ${scram_arch} ${cmssw_version}
